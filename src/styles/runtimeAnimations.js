@@ -9,7 +9,7 @@ style.textContent = `
   .animate-slide-right { animation: slide-right 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   .animate-slide-up { animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   .animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
-  .animate-fade-in { animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  .animate-fade-in-up { animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   
   .writing-vertical-rl { writing-mode: vertical-rl; text-orientation: mixed; }
   
