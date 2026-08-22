@@ -40,7 +40,6 @@ export default function ChatInput({ t, theme, value, onChange, file, onFileSelec
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter' && canSend && !isSubmitting) onSubmit(); }}
           placeholder={placeholder}
           className={`flex-1 bg-transparent px-3 py-2 focus:outline-none text-base ${t.textMain}`}
         />
@@ -52,6 +51,8 @@ export default function ChatInput({ t, theme, value, onChange, file, onFileSelec
           <button
             onClick={() => canSend && !isSubmitting && onSubmit()}
             disabled={!canSend || isSubmitting}
+            title="Send task"
+            aria-label="Send task"
             className={`p-3 rounded-full transition-all flex items-center justify-center ${canSend && !isSubmitting ? 'bg-indigo-600 text-white shadow-md hover:bg-indigo-500 active:scale-95' : disabledSendCls}`}
           >
             <Send className={`w-5 h-5 ${canSend && !isSubmitting ? 'translate-x-0.5 -translate-y-0.5' : ''}`} />
