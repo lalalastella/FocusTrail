@@ -12,6 +12,8 @@ import {
 import CollapsibleText from '../common/CollapsibleText';
 import FocusDetailView from './FocusDetailView';
 
+const isRulesSource = (source = '') => String(source).toLowerCase().includes('rules');
+
 export default function ViewCE({ t, theme, rootTask, path, onBreakdown, onRegenerate, onOpenNode, showToast, onTaskComplete, onFocusSessionComplete, onOpenRecovery }) {
   const [focusingSubtask, setFocusingSubtask] = useState(null);
 
@@ -82,12 +84,12 @@ export default function ViewCE({ t, theme, rootTask, path, onBreakdown, onRegene
                   {sub.aiSource && (
                     <span
                       className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide ${
-                        sub.aiSource === 'gemma'
-                          ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
-                          : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                        isRulesSource(sub.aiSource)
+                          ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                          : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
                       }`}
                     >
-                      {sub.aiSource === 'gemma' ? 'Gemma' : 'Rules'}
+                      {isRulesSource(sub.aiSource) ? 'Rules' : 'Gemma'}
                     </span>
                   )}
                 </div>
