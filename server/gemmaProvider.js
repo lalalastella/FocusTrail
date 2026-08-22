@@ -478,6 +478,7 @@ async function inferViaGoogleAPI(prompt, maxTokens, requestId, operation, logger
   const raw = await httpPost(url, body, 60_000, signal);
   const data = JSON.parse(raw);
   const responseParts = data?.candidates?.[0]?.content?.parts || [];
+  const finishReason = data?.candidates?.[0]?.finishReason || null;
   const visibleParts = responseParts.filter((part) => !part?.thought && typeof part?.text === 'string');
   const text = (visibleParts.length ? visibleParts : responseParts)
     .map((part) => typeof part?.text === 'string' ? part.text : '')
@@ -509,6 +510,10 @@ async function inferViaGoogleAPI(prompt, maxTokens, requestId, operation, logger
       fallbackUsed: false,
       toolCallsUsed: [],
       requestId,
+      responseChars: text.length,
+      responsePartCount: responseParts.length,
+      visiblePartCount: visibleParts.length,
+      finishReason,
     },
   };
 }

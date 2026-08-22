@@ -442,6 +442,7 @@ function getProviderHealth() {
     googleApiKeySet: pInfo.hasGoogleKey,
     googleModel: pInfo.googleModel,
     lastGoogleError: pInfo.lastGoogleError,
+    buildVersion: "provider-json-v2",
     deterministicFallback: LOCAL_RULES_PROVIDER,
   };
 }
@@ -1736,7 +1737,20 @@ ${getFileSummaryText(file)}
         fallbackCodePath: LOCAL_RULES_CODE_PATH,
         contentPreview: redactLongText(content, 1200),
       });
-      return buildLocalInitialBreakdown(taskInput, file);
+      return {
+        ...buildLocalInitialBreakdown(taskInput, file),
+        providerDiagnostic: {
+          reason: "invalid-structured-response",
+          attemptedProvider: providerMeta.provider || "unknown",
+          attemptedModel: providerMeta.model || null,
+          responseChars: providerMeta.responseChars ?? content.length,
+          responsePartCount: providerMeta.responsePartCount ?? null,
+          visiblePartCount: providerMeta.visiblePartCount ?? null,
+          finishReason: providerMeta.finishReason || null,
+          parsedKeys: parsed && typeof parsed === "object" ? Object.keys(parsed).slice(0, 12) : [],
+          parsedStepCount: Array.isArray(parsed?.steps) ? parsed.steps.length : null,
+        },
+      };
     }
 
     return {
@@ -1764,7 +1778,16 @@ ${getFileSummaryText(file)}
       previousProvider: "runtime-router",
       error: error.message,
     });
-    return buildLocalInitialBreakdown(taskInput, file);
+    const providerInfo = getProviderInfo();
+    return {
+      ...buildLocalInitialBreakdown(taskInput, file),
+      providerDiagnostic: {
+        reason: "provider-error",
+        attemptedProvider: "runtime-router",
+        attemptedModel: providerInfo.googleModel || null,
+        error: providerInfo.lastGoogleError || error.message,
+      },
+    };
   }
 }
 
