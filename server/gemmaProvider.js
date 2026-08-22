@@ -69,13 +69,14 @@ export function hasGoogleApiKey() {
 }
 
 export function getGoogleModelName() {
-  return (process.env.GOOGLE_GEMMA_MODEL || 'gemma-3-27b-it').trim();
+  return (process.env.GOOGLE_GEMMA_MODEL || 'gemma-4-26b-a4b-it').trim();
 }
 
 export function getProviderInfo() {
   return {
     cloudCallCount,
     hasGoogleKey: hasGoogleApiKey(),
+    googleModel: getGoogleModelName(),
     ollamaUrl: process.env.GEMMA_OLLAMA_URL || 'http://localhost:11434',
     ollamaModel: (process.env.GEMMA_OLLAMA_MODEL || '').trim() || 'auto-detect',
     runtimePriority: ['gemma-ollama', 'google-ai-studio', 'local-transformers', 'local-rules'],
