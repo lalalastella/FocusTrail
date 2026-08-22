@@ -824,7 +824,7 @@ export default function FocusTrailApp() {
       />
 
       {/* ================= MAIN CANVAS ================= */}
-      <main className="flex-1 flex flex-col relative overflow-hidden">
+      <main className="flex-1 min-w-0 flex flex-col relative overflow-hidden">
         
         {/* Top Header / Breadcrumbs */}
         {activeTaskId && (
@@ -886,7 +886,7 @@ export default function FocusTrailApp() {
         )}
 
         {/* Dynamic Views */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col relative custom-scrollbar">
+        <div className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 md:p-10 flex flex-col relative custom-scrollbar">
           
           {/* STATE A: No Pending Task */}
           {!activeTaskId && (

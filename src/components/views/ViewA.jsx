@@ -14,7 +14,7 @@ import ChatInput from '../common/ChatInput';
 export default function ViewA({ t, theme, value, onValueChange, file, onFileSelect, onFileClear, onSubmit, isSubmitting, submissionPreview, onCancelSubmission, webDemoMode }) {
   if (isSubmitting && submissionPreview) {
     return (
-      <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full animate-fade-in py-8 md:py-14">
+      <div className="flex-1 min-w-0 flex flex-col max-w-3xl mx-auto w-full animate-fade-in py-8 md:py-14">
         <div className="flex items-center gap-3 mb-10">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${theme === 'dark' ? 'bg-[#1c202a] border-white/10' : 'bg-white border-slate-200 shadow-sm'}`}>
             <img src="/logo.svg" alt="FocusTrail" className="w-7 h-7 object-contain" />
@@ -71,8 +71,8 @@ export default function ViewA({ t, theme, value, onValueChange, file, onFileSele
   }
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center max-w-3xl mx-auto w-full animate-fade-in">
-      <div className="text-center mb-12">
+    <div className="flex-1 min-w-0 flex flex-col items-center justify-center max-w-3xl mx-auto w-full animate-fade-in">
+      <div className="w-full min-w-0 text-center mb-12">
         {webDemoMode && (
           <div className="inline-flex items-center gap-2 mb-5 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-3 py-1.5 text-xs font-bold text-indigo-500">
             Web Demo · Planning and recovery run in your browser
