@@ -441,6 +441,7 @@ function getProviderHealth() {
     cloudCallCount: pInfo.cloudCallCount,
     googleApiKeySet: pInfo.hasGoogleKey,
     googleModel: pInfo.googleModel,
+    lastGoogleError: pInfo.lastGoogleError,
     deterministicFallback: LOCAL_RULES_PROVIDER,
   };
 }

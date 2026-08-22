@@ -9,6 +9,7 @@ import http from 'node:http';
 import https from 'node:https';
 
 export let cloudCallCount = 0;
+let lastGoogleError = null;
 
 // ─── Provider detection ──────────────────────────────────────────────────────
 
@@ -77,6 +78,7 @@ export function getProviderInfo() {
     cloudCallCount,
     hasGoogleKey: hasGoogleApiKey(),
     googleModel: getGoogleModelName(),
+    lastGoogleError,
     ollamaUrl: process.env.GEMMA_OLLAMA_URL || 'http://localhost:11434',
     ollamaModel: (process.env.GEMMA_OLLAMA_MODEL || '').trim() || 'auto-detect',
     runtimePriority: ['gemma-ollama', 'google-ai-studio', 'local-transformers', 'local-rules'],
@@ -179,6 +181,7 @@ export async function inferText(prompt, { maxTokens = 512, requestId = '', opera
   if (hasGoogleApiKey()) {
     try {
       const result = await inferViaGoogleAPI(prompt, maxTokens, requestId, operation, logger, signal);
+      lastGoogleError = null;
       writeProviderLog(logger, 'info', 'gemma.provider.route.success', {
         ...baseLog,
         summary: `${operation || 'text-inference'} completed via Google AI Studio.`,
@@ -190,6 +193,7 @@ export async function inferText(prompt, { maxTokens = 512, requestId = '', opera
       return result;
     } catch (err) {
       if (err.name === 'AbortError') throw err;
+      lastGoogleError = String(err.message || 'Unknown Google AI Studio error').slice(0, 500);
       writeProviderLog(logger, 'error', 'gemma.provider.google.failed', {
         ...baseLog,
         message: 'Google AI Studio text inference failed.',
@@ -411,8 +415,8 @@ async function classifyViaGoogleAPI(prompt, event, taskSummary) {
   const body = JSON.stringify({
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
     tools: [CLASSIFY_TOOL],
-    tool_config: { function_calling_config: { mode: 'ANY', allowed_function_names: ['classify_activity'] } },
-    generation_config: { temperature: 0, max_output_tokens: 256 },
+    toolConfig: { functionCallingConfig: { mode: 'ANY', allowedFunctionNames: ['classify_activity'] } },
+    generationConfig: { temperature: 0, maxOutputTokens: 256 },
   });
 
   const raw = await httpPost(url, body, 30_000);
@@ -463,7 +467,7 @@ async function inferViaGoogleAPI(prompt, maxTokens, requestId, operation, logger
 
   const body = JSON.stringify({
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    generation_config: { temperature: 0, max_output_tokens: maxTokens },
+    generationConfig: { temperature: 0, maxOutputTokens: maxTokens },
   });
 
   const raw = await httpPost(url, body, 60_000, signal);
