@@ -467,12 +467,22 @@ async function inferViaGoogleAPI(prompt, maxTokens, requestId, operation, logger
 
   const body = JSON.stringify({
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0, maxOutputTokens: maxTokens },
+    generationConfig: {
+      temperature: 0,
+      maxOutputTokens: Math.max(maxTokens, 768),
+      responseMimeType: 'application/json',
+      thinkingConfig: { thinkingLevel: 'minimal' },
+    },
   });
 
   const raw = await httpPost(url, body, 60_000, signal);
   const data = JSON.parse(raw);
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const responseParts = data?.candidates?.[0]?.content?.parts || [];
+  const visibleParts = responseParts.filter((part) => !part?.thought && typeof part?.text === 'string');
+  const text = (visibleParts.length ? visibleParts : responseParts)
+    .map((part) => typeof part?.text === 'string' ? part.text : '')
+    .join('')
+    .trim();
 
   writeProviderLog(logger, 'info', 'gemma.provider.google.response', {
     requestId,
