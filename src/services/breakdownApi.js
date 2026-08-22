@@ -1,31 +1,37 @@
-import { API_BASE, WEB_DEMO_MODE } from '../config/runtime';
+import { API_BASE } from '../config/runtime';
 import { createDemoBreakdown } from './demoFallback';
 
 export async function postBreakdownRequest(payload, { signal } = {}) {
-  if (WEB_DEMO_MODE || !API_BASE) {
+  const runBrowserFallback = async () => {
     await new Promise((resolve) => setTimeout(resolve, 700));
     if (signal?.aborted) throw new DOMException('Request aborted', 'AbortError');
     return createDemoBreakdown(payload);
-  }
+  };
 
-  const response = await fetch(`${API_BASE}/api/breakdown`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-    signal,
-  });
+  if (!API_BASE) return runBrowserFallback();
 
-  let data = {};
   try {
-    data = await response.json();
-  } catch {
-    data = { error: 'Local breakdown request failed' };
-  }
+    const response = await fetch(`${API_BASE}/api/breakdown`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal,
+    });
 
-  if (!response.ok) {
-    const suffix = data.requestId ? ` (requestId: ${data.requestId})` : '';
-    throw new Error(`${data.error || 'Local breakdown request failed'}${suffix}`);
-  }
+    let data = {};
+    try {
+      data = await response.json();
+    } catch {
+      data = { error: 'Breakdown request returned an invalid response.' };
+    }
 
-  return data;
+    if (!response.ok) {
+      const suffix = data.requestId ? ` (requestId: ${data.requestId})` : '';
+      throw new Error(`${data.error || 'Breakdown request failed'}${suffix}`);
+    }
+    return data;
+  } catch (error) {
+    if (error?.name === 'AbortError') throw error;
+    return runBrowserFallback();
+  }
 }

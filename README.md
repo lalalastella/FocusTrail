@@ -158,10 +158,12 @@ Go to `http://localhost:5173`, open the **Monitor** panel, and toggle **Active M
 
 ## Web Demo deployment
 
-The public Web Demo can run without the Express server, local Ollama, or desktop
-permissions. In production, when `VITE_API_BASE` is not configured, the app uses
-browser-side deterministic task breakdown and adaptive recovery so the core flow
-remains available from a shareable URL.
+The public Web Demo deploys the existing Express API as a Vercel Function. In
+production, when `VITE_API_BASE` is not configured, the frontend calls the
+same-origin `/api` routes. Configure `GOOGLE_API_KEY` in Vercel to enable
+model-backed generation. If the cloud API is unavailable, task breakdown and
+adaptive recovery fall back to deterministic browser logic so the demo remains
+usable.
 
 ```bash
 VITE_WEB_DEMO=true npm run build
@@ -169,8 +171,9 @@ npm run preview
 ```
 
 `vercel.json` contains the Vite build and SPA rewrite configuration for Vercel.
-Optionally set `VITE_API_BASE` to a hosted API to replace browser demo rules with
-model-backed generation. Focus monitoring remains a Desktop-only capability
+Optionally set `VITE_API_BASE` to use a separately hosted backend. Never expose
+model credentials through a `VITE_` variable; server-side credentials belong in
+Vercel Environment Variables. Focus monitoring remains a Desktop-only capability
 because a public browser cannot read activity from other applications.
 
 ---

@@ -8,7 +8,7 @@ import os from "node:os";
 import path from "node:path";
 import { execFile, spawn } from "node:child_process";
 import { promisify } from "node:util";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import mammoth from "mammoth";
 import XLSX from "xlsx";
 import JSZip from "jszip";
@@ -36,8 +36,12 @@ const execFileAsync = promisify(execFile);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const LOG_DIR = path.join(__dirname, "logs");
-const DATA_DIR = path.join(__dirname, "data");
+const IS_VERCEL = Boolean(process.env.VERCEL);
+const RUNTIME_DATA_ROOT = IS_VERCEL
+  ? path.join(os.tmpdir(), "focus-trail-server")
+  : __dirname;
+const LOG_DIR = path.join(RUNTIME_DATA_ROOT, "logs");
+const DATA_DIR = path.join(RUNTIME_DATA_ROOT, "data");
 const CONTEXT_STORE_DIR = path.join(DATA_DIR, "contexts");
 const TEMP_ROOT_DIR = path.join(os.tmpdir(), "flow-crusade-gemma");
 const DEFAULT_GEMMA_MODEL_ID = "google/gemma-4-E2B-it";
@@ -2341,7 +2345,11 @@ app.post("/api/breakdown", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+const isDirectRun = process.argv[1]
+  && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
+
+if (isDirectRun) {
+  app.listen(PORT, () => {
   recoverCrashedSessions();
   startHeartbeat();
   const agent = maybeStartMonitorAgent({ apiBase: `http://localhost:${PORT}` });
@@ -2357,7 +2365,10 @@ app.listen(PORT, () => {
   if (agent.started) {
     console.log(`Monitor agent restored for active session.`);
   }
-});
+  });
+}
+
+export default app;
 
 process.on("exit", () => {
   if (gemmaWorker && !gemmaWorker.closed) gemmaWorker.kill();

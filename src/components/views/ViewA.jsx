@@ -75,7 +75,7 @@ export default function ViewA({ t, theme, value, onValueChange, file, onFileSele
       <div className="w-full min-w-0 text-center mb-12">
         {webDemoMode && (
           <div className="inline-flex items-center gap-2 mb-5 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-3 py-1.5 text-xs font-bold text-indigo-500">
-            Web Demo · Planning and recovery run in your browser
+            Web Demo · Cloud AI with browser fallback
           </div>
         )}
         <div className={`w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center border ${theme === 'dark' ? 'bg-[#1c202a] border-white/10 shadow-[0_0_30px_rgba(99,102,241,0.1)]' : 'bg-white border-slate-200 shadow-xl shadow-indigo-100'}`}>
