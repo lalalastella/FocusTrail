@@ -50,7 +50,7 @@ const personalities: Record<string, Personality> = {
   SELM: { name: '慢拍树懒', family: 'SE · 巡航组', tagline: '不太乱，也不太停，只是每一步都慢半拍', description: '很少剧烈偏离，推进也较均匀，但上下文较浅、恢复较慢，容易出现长期低速移动。', advice: '缩小启动动作、放大进度反馈，并在停滞时直接给出最小下一步。', image: '/personas/selm.jpg' },
 };
 
-const defaults: Record<AxisKey, number> = { a: 74, d1: 68, h: 81, d2: 72 };
+const defaults: Record<AxisKey, number> = { a: 50, d1: 50, h: 50, d2: 50 };
 
 export default function Home() {
   const [scores, setScores] = useState(defaults);
@@ -134,7 +134,7 @@ export default function Home() {
               <p className="kicker">四维行为坐标</p>
               <h2>调出你的注意力轨迹</h2>
             </div>
-            <button className="reset" type="button" onClick={resetExperience}>恢复示例</button>
+            <button className="reset" type="button" onClick={resetExperience}>恢复默认</button>
           </div>
 
           <div className="axis-list">
