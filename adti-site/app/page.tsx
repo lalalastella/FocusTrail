@@ -60,13 +60,11 @@ export default function Home() {
 
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const seen = window.sessionStorage.getItem('focustrail-adti-splash');
-    if (reduceMotion || seen) {
+    if (reduceMotion) {
       setShowSplash(false);
       return;
     }
 
-    window.sessionStorage.setItem('focustrail-adti-splash', 'seen');
     const dismiss = () => setShowSplash(false);
     const timer = window.setTimeout(dismiss, 800);
     window.addEventListener('keydown', dismiss, { once: true });
@@ -225,7 +223,7 @@ export default function Home() {
           <p>行为倾向会随任务、环境和状态变化。结果用于自我观察与产品个性化，不用于医学诊断。</p>
         </div>
         <div className="creator">
-          <p><strong>Created by Stella</strong> · FocusTrail 独立创作者</p>
+          <p><strong>Stella</strong> · FocusTrail 创始人</p>
           <nav aria-label="FocusTrail 项目链接">
             <a href="https://focus-trail.vercel.app/" target="_blank" rel="noreferrer">Web Demo ↗</a>
             <a href="https://github.com/lalalastella/FocusTrail" target="_blank" rel="noreferrer">GitHub / 联系 Stella ↗</a>
