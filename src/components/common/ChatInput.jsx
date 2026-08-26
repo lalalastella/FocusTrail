@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { Mic, Paperclip, X } from 'lucide-react';
 
 import { SUPPORTED_UPLOAD_ACCEPT, getUploadKindLabel, isNativeImageFile } from '../../utils/file';
-import AiOrb from './AiOrb.jsx?v=3';
+import AiOrb from './AiOrb.jsx';
 
 export default function ChatInput({ t, theme, value, onChange, file, onFileSelect, onFileClear, onSubmit, placeholder, isSubmitting = false }) {
   const fileInputRef = useRef(null);

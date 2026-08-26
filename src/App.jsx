@@ -26,7 +26,7 @@ import { fetchStats, recordFocusSession, recordCompletedTask } from './services/
 import './styles/runtimeAnimations';
 import { API_BASE, HAS_REMOTE_API, WEB_DEMO_MODE } from './config/runtime';
 
-import ViewA from './components/views/ViewA.jsx?v=3';
+import ViewA from './components/views/ViewA.jsx';
 import ViewB from './components/views/ViewB';
 import ViewCE from './components/views/ViewCE';
 import NavItem from './components/common/NavItem';

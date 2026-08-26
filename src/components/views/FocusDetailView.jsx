@@ -8,6 +8,7 @@ import {
   ChevronDown, ChevronUp, ChevronLeft, Users, MapPin, Trophy, Ticket,
   Menu, PanelLeftClose
 } from 'lucide-react';
+import FocusCompanionMock from '../common/FocusCompanionMock';
 
 
 export default function FocusDetailView({ t, theme, task, onComplete, onBack, onFurtherBreakdown, onRegenerate, onFocusSessionComplete, onOpenRecovery }) {
@@ -187,6 +188,13 @@ export default function FocusDetailView({ t, theme, task, onComplete, onBack, on
               <CheckCircle className="w-5 h-5" /> Mark Completed
             </button>
           </div>
+
+          <FocusCompanionMock
+            isActive={isActive}
+            taskTitle={task.title}
+            onReturn={() => setIsActive(true)}
+            onOpenRecovery={() => { setIsActive(false); onOpenRecovery?.(); }}
+          />
         </div>
       </div>
     </div>

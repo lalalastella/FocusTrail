@@ -9,7 +9,7 @@ import {
   Menu, PanelLeftClose
 } from 'lucide-react';
 
-import ChatInput from '../common/ChatInput.jsx?v=3';
+import ChatInput from '../common/ChatInput.jsx';
 
 export default function ViewA({ t, theme, value, onValueChange, file, onFileSelect, onFileClear, onSubmit, isSubmitting, submissionPreview, onCancelSubmission, webDemoMode }) {
   if (isSubmitting && submissionPreview) {
