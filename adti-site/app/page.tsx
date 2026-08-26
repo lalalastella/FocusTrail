@@ -111,7 +111,7 @@ export default function Home() {
           </span>
         </button>
       )}
-      <main>
+      <main data-release="7">
       <header className="site-header">
         <a className="brand" href="#top" aria-label="FocusTrail ADTI 首页">
           <img src="/focustrail-logo.svg" alt="" />
