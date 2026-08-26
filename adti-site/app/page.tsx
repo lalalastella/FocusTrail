@@ -123,6 +123,7 @@ export default function Home() {
       <section id="top" className="hero">
         <p className="eyebrow">Attention Drifts. Here’s Direction.</p>
         <h1>偏了吗？<br /><span>看看你的注意力会怎么走。</span></h1>
+        <p className="adti-fullname"><strong>ADTI</strong><span>Attention Drift Type Indicator</span><em>注意力偏移类型指标</em></p>
         <p className="intro">FocusTrail 是面向大学生的 AI 执行恢复辅助工具：在分心或计划中断后，帮你回到清晰的下一步。选择四条行为轴的分数，再揭晓你的 ADTI 四字母人格；结果不是医学诊断。</p>
       </section>
 
@@ -219,8 +220,8 @@ export default function Home() {
 
       <footer>
         <div>
-          <p><strong>ADTI</strong> · Attention Drift / Deadline Drive / Hyperfocus / Direction Recovery</p>
-          <p>行为倾向会随任务、环境和状态变化。结果用于自我观察与产品个性化，不用于医学诊断。</p>
+          <p><strong>ADTI</strong> · Attention Drift Type Indicator · 注意力偏移类型指标</p>
+          <p>用注意力偏移、期限驱动、沉浸深度与方向恢复四条行为轴，描述你如何启动、偏离、沉浸与回正；结果不用于医学诊断。</p>
         </div>
         <div className="creator">
           <p><strong>Stella</strong> · FocusTrail 创始人</p>
