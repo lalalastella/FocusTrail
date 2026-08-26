@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">FocusTrail</title>
+  <desc id="desc">A minimal monochrome mark showing a trail returning to its destination.</desc>
+  <style>
+    .surface { fill: #000; }
+    .trail { fill: none; stroke: #fff; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
+    .point { fill: #fff; }
+    @media (prefers-color-scheme: dark) {
+      .surface { fill: #fff; }
+      .trail { stroke: #000; }
+      .point { fill: #000; }
+    }
+  </style>
+
+  <!-- A continuous path returns from distraction to a clear next step. -->
+  <rect class="surface" x="8" y="8" width="112" height="112" rx="31"/>
+  <path class="trail" d="M35 91 C35 72 51 72 51 56 C51 40 64 34 84 34"/>
+  <circle class="point" cx="35" cy="91" r="11"/>
+  <circle class="point" cx="88" cy="34" r="11"/>
+</svg>
