@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar as CalendarIcon, Plus, ChevronRight, ChevronLeft, CheckCircle, Trash2, History, Edit3, X } from 'lucide-react';
 
-export default function CalendarPanel({ t, tasks, historyRecords = [], onSelectTask, onCreateTask, onUpdateTaskDate, activeTaskId, onDeleteTask, onToggleTask }) {
+export default function CalendarPanel({ t, tasks, historyRecords = [], onSelectTask, onCreateTask, onUpdateTaskDate, activeTaskId, onDeleteTask, onToggleTask, onDeleteHistoryRecord }) {
   const [showAdd, setShowAdd] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDate, setNewDate] = useState('');
@@ -170,7 +170,24 @@ export default function CalendarPanel({ t, tasks, historyRecords = [], onSelectT
           {historyRecords.map(record => {
             const task = tasks.find(tk => tk.id === record.id) || record;
             return (
-              <TaskRow key={record.id} tk={task} t={t} activeTaskId={activeTaskId} onSelectTask={onSelectTask} onToggleTask={null} onDeleteTask={null} editingDueId={editingDueId} setEditingDueId={setEditingDueId} onUpdateTaskDate={onUpdateTaskDate} renderDueBadge={renderDueBadge} compact />
+              <TaskRow
+                key={record.id}
+                tk={task}
+                t={t}
+                activeTaskId={activeTaskId}
+                onSelectTask={onSelectTask}
+                onToggleTask={null}
+                onDeleteTask={(id) => {
+                  if (window.confirm('Remove this item from Historical Records? The original task and its breakdown will be kept.')) {
+                    onDeleteHistoryRecord?.(id);
+                  }
+                }}
+                editingDueId={editingDueId}
+                setEditingDueId={setEditingDueId}
+                onUpdateTaskDate={onUpdateTaskDate}
+                renderDueBadge={renderDueBadge}
+                compact
+              />
             );
           })}
         </div>

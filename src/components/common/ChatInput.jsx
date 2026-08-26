@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Mic, Paperclip, Send, X } from 'lucide-react';
+import { Mic, Paperclip, X } from 'lucide-react';
 
 import { SUPPORTED_UPLOAD_ACCEPT, getUploadKindLabel, isNativeImageFile } from '../../utils/file';
+import AiOrb from './AiOrb.jsx?v=3';
 
 export default function ChatInput({ t, theme, value, onChange, file, onFileSelect, onFileClear, onSubmit, placeholder, isSubmitting = false }) {
   const fileInputRef = useRef(null);
@@ -53,9 +54,13 @@ export default function ChatInput({ t, theme, value, onChange, file, onFileSelec
             disabled={!canSend || isSubmitting}
             title="Send task"
             aria-label="Send task"
-            className={`p-3 rounded-full transition-all flex items-center justify-center ${canSend && !isSubmitting ? 'bg-indigo-600 text-white shadow-md hover:bg-indigo-500 active:scale-95' : disabledSendCls}`}
+            className={`fc-ai-orb-button h-12 w-12 rounded-full transition-all flex items-center justify-center border ${canSend && !isSubmitting ? 'bg-white border-slate-300 shadow-md hover:shadow-lg hover:border-slate-500 active:scale-95' : `${disabledSendCls} border-transparent opacity-75`}`}
           >
-            <Send className={`w-5 h-5 ${canSend && !isSubmitting ? 'translate-x-0.5 -translate-y-0.5' : ''}`} />
+            <AiOrb
+              state={isSubmitting ? 'shaping' : canSend ? 'working' : 'idle'}
+              theme={theme}
+              label={isSubmitting ? 'FocusTrail is creating your plan' : canSend ? 'Send task with AI' : 'Enter a task to activate AI'}
+            />
           </button>
         </div>
       </div>

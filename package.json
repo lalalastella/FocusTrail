@@ -19,12 +19,13 @@
     "dotenv": "^16.6.1",
     "express": "^4.22.1",
     "framer-motion": "^12.34.3",
+    "jszip": "^3.10.1",
     "lucide-react": "^0.575.0",
+    "mammoth": "^1.10.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "mammoth": "^1.10.0",
-    "xlsx": "^0.18.5",
-    "jszip": "^3.10.1"
+    "thinking-orbs": "^0.3.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

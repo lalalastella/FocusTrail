@@ -111,6 +111,94 @@
   animation: fc-slide-up 220ms ease-out both;
 }
 
+@keyframes fc-splash-exit {
+  0%, 78% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes fc-splash-copy {
+  0%, 34% {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  58%, 100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fc-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: #050505;
+  animation: fc-splash-exit 3.2s ease-in-out both;
+}
+
+.fc-splash-lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.fc-splash-logo {
+  width: 112px;
+  height: 112px;
+}
+
+.fc-splash-name {
+  margin-top: 22px;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 750;
+  letter-spacing: -0.04em;
+  animation: fc-splash-copy 1.55s ease-out both;
+}
+
+.fc-splash-tagline {
+  margin-top: 8px;
+  color: #737373;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  animation: fc-splash-copy 1.75s ease-out both;
+}
+
+.fc-splash-slogan {
+  margin-top: 13px;
+  color: #3f3f46;
+  font-size: 15px;
+  font-weight: 520;
+  letter-spacing: 0.035em;
+  animation: fc-splash-copy 1.65s ease-out both;
+}
+
+.fc-splash-slogan span {
+  color: #111827;
+  font-weight: 800;
+}
+
+.fc-ai-orb-button:not(:disabled):focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 3px;
+}
+
+.fc-thinking-orb {
+  display: block;
+  width: 42px !important;
+  height: 42px !important;
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,
   .animate-fade-in-up,
@@ -118,4 +206,15 @@
   .animate-slide-up {
     animation: none !important;
   }
+
+  .fc-splash {
+    animation: none;
+  }
+
+  .fc-splash-name,
+  .fc-splash-slogan,
+  .fc-splash-tagline {
+    animation: none;
+  }
+
 }

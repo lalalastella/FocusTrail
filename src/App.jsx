@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Calendar as CalendarIcon, BarChart2, Activity, ChevronRight, Home,
-  CheckCircle, Edit3, Zap, ShieldAlert, Menu, PanelLeftClose,
+  Calendar as CalendarIcon, BarChart2, Activity, ChevronRight, ChevronLeft, Home,
+  CheckCircle, Edit3, Zap, ShieldAlert,
   Settings as SettingsIcon, X
 } from 'lucide-react';
 
@@ -26,7 +26,7 @@ import { fetchStats, recordFocusSession, recordCompletedTask } from './services/
 import './styles/runtimeAnimations';
 import { API_BASE, HAS_REMOTE_API, WEB_DEMO_MODE } from './config/runtime';
 
-import ViewA from './components/views/ViewA';
+import ViewA from './components/views/ViewA.jsx?v=3';
 import ViewB from './components/views/ViewB';
 import ViewCE from './components/views/ViewCE';
 import NavItem from './components/common/NavItem';
@@ -41,6 +41,19 @@ export default function FocusTrailApp() {
   // Default to Day theme (user request)
   const [theme, setTheme] = useState('light');
   const t = THEMES[theme];
+  const [showSplash, setShowSplash] = useState(true);
+  const [splashKey, setSplashKey] = useState(0);
+
+  useEffect(() => {
+    if (!showSplash) return undefined;
+    const timer = window.setTimeout(() => setShowSplash(false), 3200);
+    return () => window.clearTimeout(timer);
+  }, [showSplash, splashKey]);
+
+  const replaySplash = () => {
+    setSplashKey((current) => current + 1);
+    setShowSplash(true);
+  };
   
   const [tasks, setTasks] = useState(loadTasks);
   const [activeTaskId, setActiveTaskId] = useState(null); // Which root task is active
@@ -48,6 +61,14 @@ export default function FocusTrailApp() {
   
   const [stats, setStats] = useState({ ...INITIAL_STATS, focusTimeToday: 0, sessions: 0, avgSession: 0, completionRate: 0, distractCount: 0, distractTime: 0, taskCompletionMinutes: 0, weightedCredit: 0, focusScore: 0 });
   const [historyRecords, setHistoryRecords] = useState(loadHistory);
+  const [hiddenHistoryIds, setHiddenHistoryIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem('fc_hidden_history_ids');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [notes, setNotes] = useState(loadNotes);
   const [isNotesOpen, setIsNotesOpen] = useState(false); // mobile / tablet drawer
   const [isNotesSidebarOpen, setIsNotesSidebarOpen] = useState(true); // desktop sidebar
@@ -116,6 +137,10 @@ export default function FocusTrailApp() {
   }, [historyRecords]);
 
   useEffect(() => {
+    localStorage.setItem('fc_hidden_history_ids', JSON.stringify(hiddenHistoryIds));
+  }, [hiddenHistoryIds]);
+
+  useEffect(() => {
     localStorage.setItem(RECOVERY_HISTORY_KEY, JSON.stringify(recoveryHistory));
   }, [recoveryHistory]);
 
@@ -133,10 +158,13 @@ export default function FocusTrailApp() {
 
     setHistoryRecords(prev => {
       const merged = new Map(prev.map(record => [record.id, record]));
-      records.forEach(record => merged.set(record.id, { ...(merged.get(record.id) || {}), ...record }));
+      records
+        .filter(record => !hiddenHistoryIds.includes(record.id))
+        .forEach(record => merged.set(record.id, { ...(merged.get(record.id) || {}), ...record }));
+      hiddenHistoryIds.forEach(id => merged.delete(id));
       return Array.from(merged.values());
     });
-  }, [tasks]);
+  }, [tasks, hiddenHistoryIds]);
 
   // Rewards + level are measured in "focus minutes" (demo).
   const rewardBounds = getRewardBounds(stats.focusScore);
@@ -306,6 +334,12 @@ export default function FocusTrailApp() {
   const updateTaskDate = (taskId, date) => {
     setTasks(prev => prev.map(task => task.id === taskId ? { ...task, date: date || '' } : task));
     setHistoryRecords(prev => prev.map(record => record.id === taskId ? { ...record, date: date || '', hasDueDate: Boolean(date), updatedAt: new Date().toISOString() } : record));
+  };
+
+  const deleteHistoryRecord = (taskId) => {
+    setHistoryRecords(prev => prev.filter(record => record.id !== taskId));
+    setHiddenHistoryIds(prev => prev.includes(taskId) ? prev : [...prev, taskId]);
+    showToast('Historical record removed. The original task was kept.');
   };
 
   const selectTaskFromCalendar = (id) => {
@@ -728,6 +762,18 @@ export default function FocusTrailApp() {
 
   return (
     <div className={`flex h-screen w-full font-sans overflow-hidden selection:bg-indigo-500/30 transition-colors duration-300 ${t.bgApp} ${t.textMain}`}>
+      {showSplash && (
+        <div className="fc-splash" aria-label="FocusTrail is starting">
+          <div className="fc-splash-lockup">
+            <img className="fc-splash-logo" src={`/logo-animated.svg?play=${splashKey}`} alt="FocusTrail" />
+            <div className="fc-splash-name">FocusTrail</div>
+            <div className="fc-splash-slogan" aria-label="Attention Drifts. Here's Direction.">
+              <span>A</span>ttention <span>D</span>rifts. <span>H</span>ere’s <span>D</span>irection.
+            </div>
+            <div className="fc-splash-tagline">偏离之后，带你回到下一步</div>
+          </div>
+        </div>
+      )}
       
       {/* ================= LEFT SIDEBAR ================= */}
       <nav className={`flex flex-col items-center py-6 ${t.bgPanel} ${t.border} border-r transition-colors duration-300 z-40 shrink-0 relative`}
@@ -755,20 +801,30 @@ export default function FocusTrailApp() {
         )}
         {/* Logo + 折叠按钮 */}
         <div className={`flex items-center mb-8 px-3 w-full ${navCollapsed || isFocusedMode ? 'justify-center' : 'justify-between'}`}>
-          <div className={`flex items-center gap-2 ${t.textMain}`}>
+          <button type="button" onClick={replaySplash} className={`flex items-center gap-2 ${t.textMain}`} title="Replay FocusTrail intro">
             <img src="/logo.svg" alt="FocusTrail" className="w-8 h-8 shrink-0 object-contain" />
             {!navCollapsed && !isFocusedMode && navWidth > 130 && <span className="text-base font-bold tracking-tight whitespace-nowrap">FocusTrail</span>}
-          </div>
+          </button>
           {!isFocusedMode && !navCollapsed && navWidth > 130 && (
-            <button onClick={() => setNavCollapsed(true)} className={`p-1.5 rounded-lg transition-colors text-indigo-400 hover:bg-indigo-500/10`} title="Collapse menu">
-              <PanelLeftClose className="w-4 h-4" />
+            <button
+              onClick={() => setNavCollapsed(true)}
+              className={`flex h-7 w-7 items-center justify-center rounded-full transition-colors ${t.textMuted} hover:bg-indigo-500/10 hover:text-indigo-500`}
+              aria-label="Collapse menu"
+              title="Collapse menu"
+            >
+              <ChevronLeft className="h-4 w-4" strokeWidth={2} />
             </button>
           )}
         </div>
-        {/* 折叠时：hamburger 按钮展开 */}
+        {/* 折叠时：同一套方向箭头展开 */}
         {navCollapsed && !isFocusedMode && (
-          <button onClick={() => setNavCollapsed(false)} className="mb-4 p-2 rounded-lg transition-colors text-indigo-400 hover:bg-indigo-500/10" title="Expand menu">
-            <Menu className="w-5 h-5" />
+          <button
+            onClick={() => setNavCollapsed(false)}
+            className={`mb-4 flex h-8 w-8 items-center justify-center rounded-full transition-colors ${t.textMuted} hover:bg-indigo-500/10 hover:text-indigo-500`}
+            aria-label="Expand menu"
+            title="Expand menu"
+          >
+            <ChevronRight className="h-4 w-4" strokeWidth={2} />
           </button>
         )}
 
@@ -816,6 +872,7 @@ export default function FocusTrailApp() {
         onSelectTask={selectTaskFromCalendar}
         onCreateTask={(title, date) => createNewTask(title, date)}
         onUpdateTaskDate={updateTaskDate}
+        onDeleteHistoryRecord={deleteHistoryRecord}
         onDeleteTask={deleteTask}
         onToggleTask={toggleTask}
         historyRecords={historyRecords}

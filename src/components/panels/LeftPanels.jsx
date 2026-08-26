@@ -14,7 +14,7 @@ import StatsPanel from './StatsPanel';
 import MonitorPanel from './MonitorPanel';
 import SettingsPanel from './SettingsPanel';
 
-export default function LeftPanels({ t, theme, activePanel, close, stats, tasks, settings, setSettings, onSelectTask, onCreateTask, onUpdateTaskDate, onDeleteTask, onToggleTask, historyRecords, activeTaskId, showToast }) {
+export default function LeftPanels({ t, theme, activePanel, close, stats, tasks, settings, setSettings, onSelectTask, onCreateTask, onUpdateTaskDate, onDeleteTask, onToggleTask, onDeleteHistoryRecord, historyRecords, activeTaskId, showToast }) {
   const [panelWidth, setPanelWidth] = useState(360);
 
   if (!activePanel) return null;
@@ -55,7 +55,7 @@ export default function LeftPanels({ t, theme, activePanel, close, stats, tasks,
         </div>
 
         <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
-          {activePanel === 'calendar' && <CalendarPanel t={t} tasks={tasks} historyRecords={historyRecords} onSelectTask={onSelectTask} onCreateTask={onCreateTask} onUpdateTaskDate={onUpdateTaskDate} activeTaskId={activeTaskId} onDeleteTask={onDeleteTask} onToggleTask={onToggleTask} />}
+          {activePanel === 'calendar' && <CalendarPanel t={t} tasks={tasks} historyRecords={historyRecords} onSelectTask={onSelectTask} onCreateTask={onCreateTask} onUpdateTaskDate={onUpdateTaskDate} activeTaskId={activeTaskId} onDeleteTask={onDeleteTask} onToggleTask={onToggleTask} onDeleteHistoryRecord={onDeleteHistoryRecord} />}
           {activePanel === 'stats' && <StatsPanel t={t} theme={theme} stats={stats} />}
           {activePanel === 'monitor' && <MonitorPanel t={t} theme={theme} enabled={settings.monitorEnabled} onToggle={(v) => setSettings({ ...settings, monitorEnabled: v })} showToast={showToast} activeTask={tasks.find((tk) => tk.id === activeTaskId) || null} />}
           {activePanel === 'settings' && <SettingsPanel t={t} settings={settings} setSettings={setSettings} showToast={showToast} />}

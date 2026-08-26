@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">FocusTrail animated logo</title>
+  <desc id="desc">The trail draws from the starting point and arrives at the destination.</desc>
+  <style>
+    .trail { fill:none; stroke:#fff; stroke-width:11; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:130; animation:draw 1.55s cubic-bezier(.22,.8,.28,1) both; }
+    .destination { fill:#fff; transform-origin:88px 34px; animation:arrive 1.55s cubic-bezier(.22,.8,.28,1) both; }
+    @keyframes draw { from { stroke-dashoffset:130; } to { stroke-dashoffset:0; } }
+    @keyframes arrive { 0%,58% { transform:scale(.58); opacity:.25; } 82% { transform:scale(1.2); opacity:1; } 100% { transform:scale(1); opacity:1; } }
+    @media (prefers-reduced-motion:reduce) { .trail,.destination { animation:none; } }
+  </style>
+  <rect x="8" y="8" width="112" height="112" rx="31" fill="#000"/>
+  <path class="trail" d="M35 91 C35 72 51 72 51 56 C51 40 64 34 88 34"/>
+  <circle cx="35" cy="91" r="11" fill="#fff"/>
+  <circle class="destination" cx="88" cy="34" r="11"/>
+</svg>
