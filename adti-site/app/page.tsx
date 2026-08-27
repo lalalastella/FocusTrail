@@ -52,6 +52,38 @@ const personalities: Record<string, Personality> = {
 
 const defaults: Record<AxisKey, number> = { a: 50, d1: 50, h: 50, d2: 50 };
 
+function PersonaImage({ src, alt }: { src: string; alt: string }) {
+  const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+  const [attempt, setAttempt] = useState(0);
+
+  return (
+    <div className={`persona-image-shell is-${status}`}>
+      {status === 'loading' && (
+        <div className="persona-loader" role="status" aria-label="正在加载人格形象">
+          <span className="loader-orbit"><i /><i /><i /></span>
+          <strong>正在寻找你的注意力轨迹</strong>
+          <small>人格形象加载中…</small>
+        </div>
+      )}
+      {status === 'error' && (
+        <div className="persona-loader persona-error" role="alert">
+          <span className="loader-mark">↻</span>
+          <strong>形象暂时没有跟上</strong>
+          <button type="button" onClick={() => { setStatus('loading'); setAttempt((value) => value + 1); }}>重新加载</button>
+        </div>
+      )}
+      <img
+        key={attempt}
+        src={`${src}${attempt ? `?retry=${attempt}` : ''}`}
+        alt={alt}
+        className={status === 'loaded' ? 'is-visible' : ''}
+        onLoad={() => setStatus('loaded')}
+        onError={() => setStatus('error')}
+      />
+    </div>
+  );
+}
+
 export default function Home() {
   const [scores, setScores] = useState(defaults);
   const [resultCode, setResultCode] = useState<string | null>(null);
@@ -184,7 +216,7 @@ export default function Home() {
 
               <div className="portrait">
                 {personality.image ? (
-                  <img src={personality.image} alt={`${resultCode} ${personality.name} IP形象`} />
+                  <PersonaImage key={personality.image} src={personality.image} alt={`${resultCode} ${personality.name} IP形象`} />
                 ) : (
                   <div className="placeholder" aria-label={`${resultCode} IP形象待绘制`}>
                     <strong>{resultCode}</strong>

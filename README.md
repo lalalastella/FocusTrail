@@ -25,22 +25,109 @@ Break any task into steps → monitor your real-time activity with context-sensi
 | **Context-sensitive Focus Sentinel** | macOS/Windows agent reads the active window every 15s; Gemma 4 classifies it as focus or distraction relative to your active task — the same YouTube video can be focus or distraction depending on what you're working on |
 | **PrivacySurface Badge** | Live display of inference provider, cloud-call counter, and local/private status. Sensitive apps (Messages, 1Password, banking) are privacy-filtered before any model call |
 | **Live Stats** | Focus minutes, distraction time, streaks, and peak hours — updated instantly via SSE |
+| **Adaptive Recovery** | When a plan changes or attention drifts, generate a shorter route back to the current goal instead of restarting from zero |
+| **FELR Focus Companion** | A draggable Turning Kite desktop companion surfaces context-sensitive focus/distraction messages and recovery actions without covering the task canvas |
 | **Classification Rules** | Edit which apps and domains count as focus or distraction from the Settings panel |
 | **Quick Notes** | Persistent scratchpad beside the task canvas |
 | **Calendar View** | Schedule tasks and browse history by date |
+
+## How FocusTrail works
+
+```mermaid
+flowchart LR
+    U["User goal / document / image"]
+
+    subgraph UI["FocusTrail Experience"]
+        WEB["React Web App<br/>Task Canvas · Focus Mode"]
+        FELR["FELR Focus Companion<br/>Context cues · Recovery actions"]
+        STATS["Live Stats<br/>Focus time · Streaks · Peak hours"]
+    end
+
+    subgraph CORE["FocusTrail Local Backend"]
+        API["Express API"]
+        PRIVACY["Privacy Filter<br/>Blocks sensitive app context"]
+        SENTINEL["Focus Sentinel<br/>Context-aware classification"]
+        RECOVERY["Adaptive Recovery<br/>Generate a shorter route back"]
+        SSE["Real-time SSE Stream"]
+    end
+
+    subgraph AI["Gemma Inference Router"]
+        OLLAMA["Ollama + Gemma 4<br/>Local · Recommended"]
+        TRANSFORMERS["Transformers<br/>Local · High RAM"]
+        CLOUD["Google AI Studio<br/>Cloud fallback"]
+        RULES["Deterministic Rules<br/>No-model fallback"]
+    end
+
+    subgraph DESKTOP["Desktop Activity Monitor"]
+        MAC["macOS<br/>osascript · ioreg"]
+        WIN["Windows<br/>PowerShell · Win32"]
+        CONTEXT["Active app · Window title<br/>Browser domain"]
+    end
+
+    subgraph DATA["Local Data"]
+        LOCAL["localStorage<br/>Tasks · Notes"]
+        JSON["JSON Files<br/>Stats · Sessions · Rules"]
+    end
+
+    U --> WEB
+    WEB -->|"Task breakdown request"| API
+    API --> AI
+    OLLAMA -.->|"preferred"| API
+    TRANSFORMERS -.-> API
+    CLOUD -.->|"fallback"| API
+    RULES -.->|"final fallback"| API
+    API -->|"3 actionable steps"| WEB
+
+    MAC --> CONTEXT
+    WIN --> CONTEXT
+    CONTEXT --> PRIVACY
+    PRIVACY --> SENTINEL
+    SENTINEL --> AI
+    SENTINEL -->|"Focus / Distraction"| SSE
+
+    SSE --> WEB
+    SSE --> STATS
+    SSE --> FELR
+    FELR -->|"Attention drift"| RECOVERY
+    RECOVERY --> AI
+    RECOVERY -->|"Shorter path to goal"| WEB
+
+    WEB <--> LOCAL
+    API <--> JSON
+
+    classDef user fill:#fff7ed,stroke:#f97316,color:#431407,stroke-width:2px;
+    classDef experience fill:#eff6ff,stroke:#3b82f6,color:#172554;
+    classDef core fill:#f5f3ff,stroke:#8b5cf6,color:#2e1065;
+    classDef ai fill:#ecfdf5,stroke:#10b981,color:#052e16;
+    classDef desktop fill:#f8fafc,stroke:#64748b,color:#0f172a;
+    classDef data fill:#fefce8,stroke:#ca8a04,color:#422006;
+
+    class U user;
+    class WEB,FELR,STATS experience;
+    class API,PRIVACY,SENTINEL,RECOVERY,SSE core;
+    class OLLAMA,TRANSFORMERS,CLOUD,RULES ai;
+    class MAC,WIN,CONTEXT desktop;
+    class LOCAL,JSON data;
+```
 
 ### Screenshots
 
 **Home**
 <p align="center">
-  <img src="public/screenshots/home.png" width="760" alt="Home — enter a task or upload a file"/>
-  <br/><sub>Enter a task or upload a file to get started</sub>
+  <img src="public/screenshots/home-main.png" width="760" alt="FocusTrail Web Demo home — enter a task or upload a file"/>
+  <br/><sub>Start from one goal, a document, screenshot, or handwritten photo</sub>
 </p>
 
 **Local Gemma Task Breakdown**
 <p align="center">
-  <img src="public/screenshots/breakdown.png" width="760" alt="Local Gemma task breakdown tree"/>
-  <br/><sub>Local Gemma breaks any goal into 3 subtasks, each drill-downable into 3 more</sub>
+  <img src="public/screenshots/breakdown-main.png" width="760" alt="FocusTrail task breakdown into three actionable steps"/>
+  <br/><sub>Turn a broad goal into three actionable steps, then focus or break down any step again</sub>
+</p>
+
+**FELR Turning Kite Focus Companion**
+<p align="center">
+  <img src="public/screenshots/felr-companion.png" width="760" alt="Draggable FELR Turning Kite companion showing a distraction recovery message"/>
+  <br/><sub>Draggable always-on-top companion with focus cues, simulated distraction alerts, and one-click recovery actions</sub>
 </p>
 
 **Focus Mode**
@@ -77,7 +164,7 @@ Break any task into steps → monitor your real-time activity with context-sensi
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/PST-Protocol/FocusTrail.git
+git clone https://github.com/lalalastella/FocusTrail.git
 cd FocusTrail
 npm install
 ```
@@ -136,13 +223,13 @@ The `PrivacySurface` badge in the Monitor panel shows the active provider, wheth
 
 Upload intake supports text, Word/Office documents, PDFs, and native image inputs for screenshots or handwritten photos (`PNG`, `JPG/JPEG`, `WebP`, `BMP`, `GIF`, `TIFF`). Image uploads are decoded locally and passed to Gemma as pixels rather than through an OCR-only preprocessing step.
 
-### 3. Start the backend
+### 4. Start the backend
 
 ```bash
 npm run server
 ```
 
-### 4. Start the frontend
+### 5. Start the frontend
 
 In a second terminal:
 
@@ -150,13 +237,20 @@ In a second terminal:
 npm run dev
 ```
 
-### 5. Open the app
+### 6. Open the app
 
 Go to `http://localhost:5173`, open the **Monitor** panel, and toggle **Active Monitor** on. The desktop agent starts automatically.
 
 ---
 
 ## Web Demo deployment
+
+Live Web Demo: **https://focus-trail.vercel.app/**
+
+ADTI attention-personality experience:
+
+- China: **https://ft46mjzkbh.coze.site/**
+- Overseas: **https://focustrail-adti.jyxsju.chatgpt.site/**
 
 The public Web Demo deploys the existing Express API as a Vercel Function. In
 production, when `VITE_API_BASE` is not configured, the frontend calls the
