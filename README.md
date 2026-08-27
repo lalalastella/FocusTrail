@@ -249,7 +249,7 @@ Live Web Demo: **https://focus-trail.vercel.app/**
 
 ADTI attention-personality experience:
 
-- China: **https://ft46mjzkbh.coze.site/**
+- China: **https://focustrail-adti.coze.site/**
 - Overseas: **https://focustrail-adti.jyxsju.chatgpt.site/**
 
 The public Web Demo deploys the existing Express API as a Vercel Function. In
