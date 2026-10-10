@@ -141,6 +141,98 @@
 .fc-ai-orb-button:not(:disabled):focus-visible { outline: 2px solid #6366f1; outline-offset: 3px; }
 .fc-thinking-orb { display: block; width: 42px !important; height: 42px !important; pointer-events: none; }
 
+/* Home task launcher: the four ADTI families rise behind the task field. */
+.fc-home-launcher {
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+}
+.fc-home-personas {
+  position: relative;
+  z-index: 1;
+  width: min(86%, 600px);
+  height: auto;
+  aspect-ratio: 600 / 198;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+.fc-home-personas::after {
+  content: '';
+  position: absolute;
+  right: 8%;
+  bottom: 8px;
+  left: 8%;
+  height: 34px;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(74, 91, 154, .18), transparent 68%);
+  filter: blur(9px);
+}
+.fc-home-persona {
+  position: relative;
+  width: 24%;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  filter: drop-shadow(0 12px 14px rgba(31, 44, 80, .16));
+  transform-origin: 50% 100%;
+  opacity: 0;
+}
+.fc-home-personas-ready .fc-home-persona { animation: fc-home-crew-in .62s cubic-bezier(.2,.85,.3,1) both; }
+.fc-home-persona img {
+  width: 122%;
+  max-width: none;
+  max-height: 106%;
+  object-fit: contain;
+  object-position: center bottom;
+  transform: scaleX(-1);
+}
+.fc-home-persona-fb { z-index: 1; transform: translate(29%, -4.5%) rotate(2deg); }
+.fc-home-persona-fe {
+  z-index: 4;
+  transform: translate(3.5%, -17%) rotate(1deg);
+}
+.fc-home-persona-fe img {
+  width: 142%;
+  max-height: 108%;
+}
+.fc-home-persona-sb { z-index: 3; transform: translate(-3.5%, -2.5%) rotate(-1deg); }
+.fc-home-persona-se { z-index: 2; transform: translate(-29%, -.5%) rotate(-2deg); }
+.fc-home-personas-ready .fc-home-persona-fb { animation-delay: 60ms; }
+.fc-home-personas-ready .fc-home-persona-fe { animation: fc-home-kite-arrive .92s cubic-bezier(.18,.82,.25,1) 240ms both; }
+.fc-home-personas-ready .fc-home-persona-sb { animation-delay: 470ms; }
+.fc-home-personas-ready .fc-home-persona-se { animation-delay: 680ms; }
+.fc-home-input-shell {
+  position: relative;
+  z-index: 5;
+  margin-top: max(-28px, -4.4%);
+}
+.fc-home-input-shell .fc-chat-input-frame {
+  min-height: clamp(66px, 10.16cqw, 78px);
+  padding: 9px 11px;
+  border-color: rgba(148, 163, 184, .3);
+  box-shadow: 0 18px 38px rgba(55, 65, 107, .16), 0 2px 8px rgba(55, 65, 107, .08);
+  backdrop-filter: blur(18px) saturate(1.08);
+}
+@keyframes fc-home-crew-in {
+  from { opacity: 0; translate: 0 18px; scale: .94; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
+}
+@keyframes fc-home-kite-arrive {
+  from { opacity: 0; translate: 0 38px; scale: .92; }
+  65% { opacity: .9; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
+}
+@media (max-width: 700px) {
+  .fc-home-view { justify-content: flex-start; padding-top: 18px; }
+  .fc-home-personas { width: 92%; }
+}
+
 /* FocusTrail prototype companion: FELR / Turning Kite */
 .fc-companion {
   --fc-ink: #17324d;
@@ -217,9 +309,11 @@
   .fc-kite-art,
   .fc-kite-wind,
   .fc-kite-returned .fc-kite-art,
-  .fc-kite-returned .fc-kite-orbit {
+  .fc-kite-returned .fc-kite-orbit,
+  .fc-home-persona {
     animation: none !important;
   }
+  .fc-home-persona { opacity: 1; }
   .fc-splash,
   .fc-splash-name,
   .fc-splash-slogan,
@@ -378,6 +472,63 @@
 .fc-bubble-close { width: 30px; height: 30px; display: grid; place-items: center; color: #718496; border-radius: 50%; background: rgba(23,50,77,.06); }
 .fc-companion-copy h3 { font-size: 18px; }
 .fc-companion-actions { position: relative; z-index: 2; }
+.fc-adti-bubble {
+  overflow: hidden;
+  border-color: rgba(121, 105, 214, .24);
+  background:
+    radial-gradient(circle at 100% 0, rgba(117, 224, 215, .22), transparent 43%),
+    radial-gradient(circle at 0 100%, rgba(132, 93, 220, .16), transparent 48%),
+    rgba(255,255,255,.92);
+}
+.fc-adti-bubble::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 28px;
+  width: 88px;
+  height: 3px;
+  border-radius: 0 0 99px 99px;
+  background: linear-gradient(90deg, #42a7c6, #7657d5, #ff8b61);
+}
+.fc-adti-card h3 { margin: 0; color: #17324d; font-size: 20px; line-height: 1.28; letter-spacing: -.015em; }
+.fc-adti-card p { margin: 8px 0 15px; color: #63788b; font-size: 13px; line-height: 1.55; }
+.fc-adti-trail { display: flex; align-items: center; margin-bottom: 16px; }
+.fc-adti-trail span {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  color: white;
+  border-radius: 50%;
+  background: #3974d5;
+  box-shadow: 0 5px 12px rgba(57,116,213,.2);
+  font-size: 10px;
+  font-weight: 900;
+}
+.fc-adti-trail span:nth-of-type(2) { background: #42a7c6; }
+.fc-adti-trail span:nth-of-type(3) { background: #7657d5; }
+.fc-adti-trail span:nth-of-type(4) { background: #ff8b61; }
+.fc-adti-trail i { height: 1px; flex: 1; background: linear-gradient(90deg, rgba(57,116,213,.28), rgba(118,87,213,.34)); }
+.fc-adti-link {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  color: white;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #3974d5, #7657d5);
+  box-shadow: 0 9px 22px rgba(78, 79, 188, .23);
+  font-size: 12px;
+  font-weight: 850;
+  text-decoration: none;
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.fc-adti-link:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(78, 79, 188, .29); }
+.fc-adti-link:focus-visible,
+.fc-pet-drag-region:focus-visible { outline: 3px solid rgba(57,116,213,.42); outline-offset: 3px; }
 @keyframes fc-pet-message-in { from { opacity: 0; transform: translate(14px, 9px) scale(.96); } to { opacity: 1; transform: translate(0) scale(1); } }
 @keyframes fc-pet-float {
   0%, 100% { transform: translateX(-50%) translateY(0) rotate(-.5deg); }

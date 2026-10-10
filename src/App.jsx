@@ -960,6 +960,7 @@ export default function FocusTrailApp() {
               submissionPreview={submissionPreview}
               onCancelSubmission={handleCancelInitialSend}
               webDemoMode={WEB_DEMO_MODE}
+              introReady={!showSplash}
             />
           )}
 
@@ -991,6 +992,7 @@ export default function FocusTrailApp() {
               onTaskComplete={handleTaskComplete}
               onFocusSessionComplete={handleFocusSessionComplete}
               onOpenRecovery={openRecovery}
+              isRecoveryOpen={isRecoveryOpen}
             />
           )}
         </div>

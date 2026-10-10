@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Mic, Paperclip, X } from 'lucide-react';
+import { Paperclip, X } from 'lucide-react';
 
 import { SUPPORTED_UPLOAD_ACCEPT, getUploadKindLabel, isNativeImageFile } from '../../utils/file';
 import AiOrb from './AiOrb.jsx';
@@ -20,7 +20,7 @@ export default function ChatInput({ t, theme, value, onChange, file, onFileSelec
 
   return (
     <div className="w-full max-w-3xl mx-auto">
-      <div className={`relative flex items-center border shadow-xl rounded-full p-2 focus-within:ring-2 focus-within:border-indigo-500 transition-all w-full ${t.bgInput} ${t.border}`}>
+      <div className={`fc-chat-input-frame relative flex items-center border shadow-xl rounded-full p-2 focus-within:ring-2 focus-within:border-indigo-500 transition-all w-full ${t.bgInput} ${t.border}`}>
         <input
           ref={fileInputRef}
           type="file"
@@ -46,9 +46,6 @@ export default function ChatInput({ t, theme, value, onChange, file, onFileSelec
         />
 
         <div className="flex items-center gap-1 shrink-0 pr-1">
-          <button className={`p-3 rounded-full transition-colors hidden sm:block ${t.textMuted} hover:bg-indigo-500/10 hover:text-indigo-400`} type="button">
-            <Mic className="w-5 h-5" />
-          </button>
           <button
             onClick={() => canSend && !isSubmitting && onSubmit()}
             disabled={!canSend || isSubmitting}

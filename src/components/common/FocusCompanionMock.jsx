@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowRight, Check, ChevronDown, ChevronUp, Clock3, Sparkles, Volume2, X } from 'lucide-react';
+import { ArrowRight, Check, ChevronDown, ChevronUp, Clock3, ExternalLink, Sparkles, X } from 'lucide-react';
+
+const ADTI_URL = 'https://focustrail-adti.jyxsju.chatgpt.site/';
 
 const COPY = {
   idle: {
@@ -47,9 +49,10 @@ function TurningKite({ state }) {
   );
 }
 
-export default function FocusCompanionMock({ isActive, taskTitle, onReturn, onOpenRecovery }) {
+export default function FocusCompanionMock({ isActive, hidden = false, taskTitle, onReturn, onOpenRecovery }) {
   const [overrideState, setOverrideState] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showAdtiEgg, setShowAdtiEgg] = useState(false);
   const [position, setPosition] = useState(() => {
     try {
       const saved = localStorage.getItem('fc_turning_kite_position');
@@ -60,12 +63,14 @@ export default function FocusCompanionMock({ isActive, taskTitle, onReturn, onOp
   });
   const escalationRef = useRef(null);
   const dragRef = useRef(null);
+  const petTapRef = useRef({ count: 0, lastAt: 0 });
   const state = overrideState || (isActive ? 'focused' : 'idle');
 
   useEffect(() => () => clearTimeout(escalationRef.current), []);
 
   const simulateDistraction = () => {
     clearTimeout(escalationRef.current);
+    setShowAdtiEgg(false);
     setOverrideState('drifting');
     setIsExpanded(true);
     escalationRef.current = setTimeout(() => setOverrideState('alert'), 4200);
@@ -94,9 +99,22 @@ export default function FocusCompanionMock({ isActive, taskTitle, onReturn, onOp
     setOverrideState(null);
   };
 
+  const revealAdtiEgg = () => {
+    if (state !== 'idle') return;
+    setIsExpanded(false);
+    setShowAdtiEgg(true);
+  };
+
+  const handlePetKeyDown = (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    revealAdtiEgg();
+  };
+
   const copy = COPY[state];
   const isIntervening = state === 'drifting' || state === 'alert';
-  const showMessage = isExpanded || isIntervening || state === 'returned';
+  const showAdti = showAdtiEgg && state === 'idle';
+  const showMessage = showAdti || isExpanded || isIntervening || state === 'returned';
   const isOnLeft = position && position.x < window.innerWidth / 2;
 
   const handlePointerDown = (event) => {
@@ -108,6 +126,9 @@ export default function FocusCompanionMock({ isActive, taskTitle, onReturn, onOp
       pointerId: event.pointerId,
       offsetX: event.clientX - rect.left,
       offsetY: event.clientY - rect.top,
+      startX: event.clientX,
+      startY: event.clientY,
+      moved: false,
       width: rect.width,
       height: rect.height,
     };
@@ -118,6 +139,10 @@ export default function FocusCompanionMock({ isActive, taskTitle, onReturn, onOp
   const handlePointerMove = (event) => {
     const drag = dragRef.current;
     if (!drag || drag.pointerId !== event.pointerId) return;
+    if (Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) > 6) {
+      drag.moved = true;
+      petTapRef.current = { count: 0, lastAt: 0 };
+    }
     const margin = 8;
     const x = Math.min(window.innerWidth - drag.width - margin, Math.max(margin, event.clientX - drag.offsetX));
     const y = Math.min(window.innerHeight - drag.height - margin, Math.max(margin, event.clientY - drag.offsetY));
@@ -125,12 +150,29 @@ export default function FocusCompanionMock({ isActive, taskTitle, onReturn, onOp
   };
 
   const handlePointerUp = (event) => {
-    if (!dragRef.current || dragRef.current.pointerId !== event.pointerId) return;
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
     dragRef.current = null;
     event.currentTarget.classList.remove('fc-companion-dragging');
     event.currentTarget.releasePointerCapture?.(event.pointerId);
-    if (position) localStorage.setItem('fc_turning_kite_position', JSON.stringify(position));
+    if (drag.moved) {
+      if (position) localStorage.setItem('fc_turning_kite_position', JSON.stringify(position));
+      return;
+    }
+
+    if (state === 'idle') {
+      const now = Date.now();
+      const previous = petTapRef.current;
+      const count = now - previous.lastAt <= 900 ? previous.count + 1 : 1;
+      petTapRef.current = { count, lastAt: now };
+      if (count >= 3) {
+        petTapRef.current = { count: 0, lastAt: 0 };
+        revealAdtiEgg();
+      }
+    }
   };
+
+  if (hidden) return null;
 
   const companion = (
     <section
@@ -143,23 +185,37 @@ export default function FocusCompanionMock({ isActive, taskTitle, onReturn, onOp
       aria-live="polite"
     >
       {showMessage && (
-        <div className="fc-companion-bubble">
+        <div className={`fc-companion-bubble ${showAdti ? 'fc-adti-bubble' : ''}`}>
           <div className="fc-companion-topline">
-            <span className="fc-prototype-pill"><Sparkles size={12} /> FocusTrail Companion · Prototype</span>
-            <button type="button" className="fc-bubble-close" onClick={() => setIsExpanded(false)} aria-label="Collapse message"><X size={15} /></button>
+            <span className="fc-prototype-pill"><Sparkles size={12} /> {showAdti ? 'A hidden trail' : 'FocusTrail Companion · Prototype'}</span>
+            <button type="button" className="fc-bubble-close" onClick={() => { setIsExpanded(false); setShowAdtiEgg(false); }} aria-label="Collapse message"><X size={15} /></button>
           </div>
 
-          <div className="fc-companion-copy">
-            <span className="fc-companion-eyebrow">{copy.eyebrow}</span>
-            <h3>{copy.title}</h3>
-            <p>{copy.body}</p>
-            <div className="fc-current-thread">
-              <span>Goal line</span>
-              <strong>{taskTitle || 'Current focus task'}</strong>
+          {showAdti ? (
+            <div className="fc-adti-card">
+              <span className="fc-companion-eyebrow">ADTI · Attention Drift Type Indicator</span>
+              <h3>What pulls your attention off course?</h3>
+              <p>Take the two-minute personality test and meet the companion that fits your focus style.</p>
+              <div className="fc-adti-trail" aria-hidden="true">
+                <span>A</span><i /><span>D</span><i /><span>T</span><i /><span>I</span>
+              </div>
+              <a className="fc-adti-link" href={ADTI_URL} target="_blank" rel="noreferrer">
+                Discover your ADTI type <ExternalLink size={14} />
+              </a>
             </div>
-          </div>
+          ) : (
+            <div className="fc-companion-copy">
+              <span className="fc-companion-eyebrow">{copy.eyebrow}</span>
+              <h3>{copy.title}</h3>
+              <p>{copy.body}</p>
+              <div className="fc-current-thread">
+                <span>Goal line</span>
+                <strong>{taskTitle || 'Current focus task'}</strong>
+              </div>
+            </div>
+          )}
 
-          {state === 'drifting' && (
+          {!showAdti && state === 'drifting' && (
             <div className="fc-companion-actions">
               <button type="button" className="fc-action-primary" onClick={returnToTask}><ArrowRight size={16} /> Return to task</button>
               <button type="button" className="fc-action-secondary" onClick={markRelevant}><Check size={15} /> This is task-related</button>
@@ -167,7 +223,7 @@ export default function FocusCompanionMock({ isActive, taskTitle, onReturn, onOp
             </div>
           )}
 
-          {state === 'alert' && (
+          {!showAdti && state === 'alert' && (
             <div className="fc-companion-actions fc-companion-actions-alert">
               <button type="button" className="fc-action-primary" onClick={returnToTask}><ArrowRight size={16} /> Return now</button>
               <button type="button" className="fc-action-recovery" onClick={openRecovery}><Sparkles size={15} /> Create recovery plan</button>
@@ -178,17 +234,29 @@ export default function FocusCompanionMock({ isActive, taskTitle, onReturn, onOp
       )}
 
       <div className="fc-pet-dock">
-        <div className="fc-pet-drag-region" title="Hold and drag the companion">
+        <div
+          className="fc-pet-drag-region"
+          title={state === 'idle' ? 'Hold to drag. Triple-click to discover a hidden trail.' : 'Hold and drag the companion'}
+          role={state === 'idle' ? 'button' : undefined}
+          tabIndex={state === 'idle' ? 0 : undefined}
+          aria-label={state === 'idle' ? 'Turning Kite companion. Press Enter or triple-click to reveal a surprise.' : undefined}
+          onKeyDown={handlePetKeyDown}
+        >
           <TurningKite state={state} />
           <span className="fc-drag-hint">Drag me</span>
         </div>
         <div className="fc-pet-controls">
-          <button type="button" title="Play companion sound" aria-label="Play companion sound"><Volume2 size={18} /></button>
           <button type="button" onClick={() => setIsExpanded((value) => !value)} title={showMessage ? 'Collapse message' : 'Expand message'} aria-label={showMessage ? 'Collapse message' : 'Expand message'}>
             {showMessage ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
           </button>
         </div>
-        <button type="button" className="fc-demo-trigger" onClick={simulateDistraction} disabled={!isActive || isIntervening}>
+        <button
+          type="button"
+          className="fc-demo-trigger"
+          onClick={simulateDistraction}
+          disabled={isIntervening}
+          title="Preview the distraction recovery flow"
+        >
           <Sparkles size={13} /> Simulate distraction
         </button>
       </div>

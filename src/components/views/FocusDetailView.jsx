@@ -11,7 +11,7 @@ import {
 import FocusCompanionMock from '../common/FocusCompanionMock';
 
 
-export default function FocusDetailView({ t, theme, task, onComplete, onBack, onFurtherBreakdown, onRegenerate, onFocusSessionComplete, onOpenRecovery }) {
+export default function FocusDetailView({ t, theme, task, onComplete, onBack, onFurtherBreakdown, onRegenerate, onFocusSessionComplete, onOpenRecovery, isRecoveryOpen }) {
   const initialMinutes = task?.estimatedMinutes || 25;
   const [selectedMinutes, setSelectedMinutes] = useState(initialMinutes);
   const [customMinutes, setCustomMinutes] = useState(String(initialMinutes));
@@ -190,7 +190,9 @@ export default function FocusDetailView({ t, theme, task, onComplete, onBack, on
           </div>
 
           <FocusCompanionMock
+            key={isRecoveryOpen ? 'recovery-hidden' : 'recovery-visible'}
             isActive={isActive}
+            hidden={isRecoveryOpen}
             taskTitle={task.title}
             onReturn={() => setIsActive(true)}
             onOpenRecovery={() => { setIsActive(false); onOpenRecovery?.(); }}

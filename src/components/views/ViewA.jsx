@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React from 'react';
 import { 
   Calendar as CalendarIcon, BarChart2, Activity, Plus, Mic, Send, 
   ChevronRight, Home, CheckCircle, Clock, RefreshCw, 
@@ -11,7 +11,7 @@ import {
 
 import ChatInput from '../common/ChatInput.jsx';
 
-export default function ViewA({ t, theme, value, onValueChange, file, onFileSelect, onFileClear, onSubmit, isSubmitting, submissionPreview, onCancelSubmission, webDemoMode }) {
+export default function ViewA({ t, theme, value, onValueChange, file, onFileSelect, onFileClear, onSubmit, isSubmitting, submissionPreview, onCancelSubmission, webDemoMode, introReady = true }) {
   if (isSubmitting && submissionPreview) {
     return (
       <div className="flex-1 min-w-0 flex flex-col max-w-3xl mx-auto w-full animate-fade-in py-8 md:py-14">
@@ -71,8 +71,8 @@ export default function ViewA({ t, theme, value, onValueChange, file, onFileSele
   }
 
   return (
-    <div className="flex-1 min-w-0 flex flex-col items-center justify-center max-w-3xl mx-auto w-full animate-fade-in">
-      <div className="w-full min-w-0 text-center mb-12">
+    <div className="fc-home-view flex-1 min-w-0 flex flex-col items-center justify-center max-w-3xl mx-auto w-full animate-fade-in">
+      <div className="w-full min-w-0 text-center mb-6 md:mb-8">
         {webDemoMode && (
           <div className="inline-flex items-center gap-2 mb-5 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-3 py-1.5 text-xs font-bold text-indigo-500">
             Web Demo · Cloud AI with browser fallback
@@ -85,22 +85,39 @@ export default function ViewA({ t, theme, value, onValueChange, file, onFileSele
         <p className={`text-lg ${t.textMuted}`}>Type a task, upload Word/PDF, or add a screenshot or handwritten photo.</p>
       </div>
 
-      <div className="w-full mt-4">
-        <ChatInput
-          t={t}
-          theme={theme}
-          value={value}
-          onChange={onValueChange}
-          file={file}
-          onFileSelect={onFileSelect}
-          onFileClear={onFileClear}
-          onSubmit={onSubmit}
-          isSubmitting={isSubmitting}
-          placeholder="e.g. Write a 5-page history essay by Friday..."
-        />
+      <div className="fc-home-launcher w-full">
+        <div className={`fc-home-personas ${introReady ? 'fc-home-personas-ready' : ''}`} aria-label="Four ADTI focus-style companions">
+          <figure className="fc-home-persona fc-home-persona-fb">
+            <img src="/personas/home-fblr-bouncing-spark.png" alt="FB Bouncing Spark companion" />
+          </figure>
+          <figure className="fc-home-persona fc-home-persona-fe">
+            <img src="/personas/home-felr-turning-kite.png" alt="FE Turning Kite companion" />
+          </figure>
+          <figure className="fc-home-persona fc-home-persona-sb">
+            <img src="/personas/home-sblr-beat-parkour.png" alt="SB Beat Parkour companion" />
+          </figure>
+          <figure className="fc-home-persona fc-home-persona-se">
+            <img src="/personas/home-selr-trail-courier.png" alt="SE Trail Courier companion" />
+          </figure>
+        </div>
+
+        <div className="fc-home-input-shell">
+          <ChatInput
+            t={t}
+            theme={theme}
+            value={value}
+            onChange={onValueChange}
+            file={file}
+            onFileSelect={onFileSelect}
+            onFileClear={onFileClear}
+            onSubmit={onSubmit}
+            isSubmitting={isSubmitting}
+            placeholder="e.g. Write a 5-page history essay by Friday..."
+          />
+        </div>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-3 mt-10">
+      <div className="flex flex-wrap justify-center gap-3 mt-8">
          <SuggestionBadge t={t} text="Study for Math Midterm" onClick={() => onSubmit('Study for Math Midterm')} />
          <SuggestionBadge t={t} text="Clean my room" onClick={() => onSubmit('Clean my room')} />
          <SuggestionBadge t={t} text="Read 2 chapters" onClick={() => onSubmit('Read 2 chapters')} />

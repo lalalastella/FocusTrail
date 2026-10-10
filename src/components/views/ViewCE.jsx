@@ -14,7 +14,7 @@ import FocusDetailView from './FocusDetailView';
 
 const isRulesSource = (source = '') => String(source).toLowerCase().includes('rules');
 
-export default function ViewCE({ t, theme, rootTask, path, onBreakdown, onRegenerate, onOpenNode, showToast, onTaskComplete, onFocusSessionComplete, onOpenRecovery }) {
+export default function ViewCE({ t, theme, rootTask, path, onBreakdown, onRegenerate, onOpenNode, showToast, onTaskComplete, onFocusSessionComplete, onOpenRecovery, isRecoveryOpen }) {
   const [focusingSubtask, setFocusingSubtask] = useState(null);
 
   let currentContext = rootTask;
@@ -48,6 +48,7 @@ export default function ViewCE({ t, theme, rootTask, path, onBreakdown, onRegene
         onFurtherBreakdown={() => { setFocusingSubtask(null); onBreakdown(activeSubtask.id); }}
         onRegenerate={() => { setFocusingSubtask(null); onRegenerate(activeSubtask.id); }}
         onOpenRecovery={() => onOpenRecovery?.(activeSubtask.id)}
+        isRecoveryOpen={isRecoveryOpen}
       />
     );
   }
