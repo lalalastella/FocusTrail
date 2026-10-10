@@ -4,29 +4,29 @@ import { ArrowRight, Check, ChevronDown, ChevronUp, Clock3, Sparkles, Volume2, X
 
 const COPY = {
   idle: {
-    eyebrow: '目标导航伙伴',
-    title: '回旋风筝在等你出发',
-    body: '开始专注后，我会替你牵着这条目标线。',
+    eyebrow: 'Goal navigation companion',
+    title: 'Turning Kite is ready when you are',
+    body: 'Start a focus session, and I\'ll help you stay connected to your goal.',
   },
   focused: {
-    eyebrow: '专注中 · 航线稳定',
-    title: '风很轻，继续眼前这一步',
-    body: '我会安静地待在这里，不打扰你的节奏。',
+    eyebrow: 'Focused · On course',
+    title: 'The wind is calm—keep going',
+    body: 'I\'ll stay quietly by your side without interrupting your flow.',
   },
   drifting: {
-    eyebrow: '疑似偏离 · 00:48',
-    title: '好像被风带远了一点',
-    body: '当前活动可能与目标无关。先确认一下，不急着责怪自己。',
+    eyebrow: 'Possible distraction · 00:48',
+    title: 'Looks like the wind carried you off course',
+    body: 'Your current activity may not support your goal. Let\'s check—no judgment.',
   },
   alert: {
-    eyebrow: '持续偏离 · 03:12',
-    title: '我还替你牵着目标线',
-    body: '原计划可能受到影响。现在回来，或让我帮你缩短路线。',
+    eyebrow: 'Ongoing distraction · 03:12',
+    title: 'I\'m still holding your goal line',
+    body: 'Your plan may be slipping. Return now, or let me help you find a shorter route.',
   },
   returned: {
-    eyebrow: '已回到目标',
-    title: '回来了，我们只做眼前这一步',
-    body: '这次回正已记入你的 FocusTrail。',
+    eyebrow: 'Back on track',
+    title: 'You\'re back—just take the next step',
+    body: 'This recovery has been added to your FocusTrail.',
   },
 };
 
@@ -38,7 +38,7 @@ function TurningKite({ state }) {
       <img
         className="fc-kite-art"
         src="/personas/felr-turning-kite-transparent-v2.png"
-        alt="FELR 回旋风筝人格 IP"
+        alt="FELR Turning Kite companion"
         draggable="false"
         onDragStart={(event) => event.preventDefault()}
       />
@@ -145,8 +145,8 @@ export default function FocusCompanionMock({ isActive, taskTitle, onReturn, onOp
       {showMessage && (
         <div className="fc-companion-bubble">
           <div className="fc-companion-topline">
-            <span className="fc-prototype-pill"><Sparkles size={12} /> FocusTrail 桌宠 · Prototype</span>
-            <button type="button" className="fc-bubble-close" onClick={() => setIsExpanded(false)} aria-label="收起消息"><X size={15} /></button>
+            <span className="fc-prototype-pill"><Sparkles size={12} /> FocusTrail Companion · Prototype</span>
+            <button type="button" className="fc-bubble-close" onClick={() => setIsExpanded(false)} aria-label="Collapse message"><X size={15} /></button>
           </div>
 
           <div className="fc-companion-copy">
@@ -154,42 +154,42 @@ export default function FocusCompanionMock({ isActive, taskTitle, onReturn, onOp
             <h3>{copy.title}</h3>
             <p>{copy.body}</p>
             <div className="fc-current-thread">
-              <span>目标线</span>
-              <strong>{taskTitle || '当前专注任务'}</strong>
+              <span>Goal line</span>
+              <strong>{taskTitle || 'Current focus task'}</strong>
             </div>
           </div>
 
           {state === 'drifting' && (
             <div className="fc-companion-actions">
-              <button type="button" className="fc-action-primary" onClick={returnToTask}><ArrowRight size={16} /> 回到任务</button>
-              <button type="button" className="fc-action-secondary" onClick={markRelevant}><Check size={15} /> 这是任务需要</button>
-              <button type="button" className="fc-action-ghost" onClick={remindLater}><Clock3 size={15} /> 稍后提醒</button>
+              <button type="button" className="fc-action-primary" onClick={returnToTask}><ArrowRight size={16} /> Return to task</button>
+              <button type="button" className="fc-action-secondary" onClick={markRelevant}><Check size={15} /> This is task-related</button>
+              <button type="button" className="fc-action-ghost" onClick={remindLater}><Clock3 size={15} /> Remind me later</button>
             </div>
           )}
 
           {state === 'alert' && (
             <div className="fc-companion-actions fc-companion-actions-alert">
-              <button type="button" className="fc-action-primary" onClick={returnToTask}><ArrowRight size={16} /> 立即回去</button>
-              <button type="button" className="fc-action-recovery" onClick={openRecovery}><Sparkles size={15} /> 生成恢复方案</button>
-              <button type="button" className="fc-action-ghost" onClick={markRelevant}><X size={15} /> 暂停提醒</button>
+              <button type="button" className="fc-action-primary" onClick={returnToTask}><ArrowRight size={16} /> Return now</button>
+              <button type="button" className="fc-action-recovery" onClick={openRecovery}><Sparkles size={15} /> Create recovery plan</button>
+              <button type="button" className="fc-action-ghost" onClick={markRelevant}><X size={15} /> Pause reminders</button>
             </div>
           )}
         </div>
       )}
 
       <div className="fc-pet-dock">
-        <div className="fc-pet-drag-region" title="按住并拖动桌宠">
+        <div className="fc-pet-drag-region" title="Hold and drag the companion">
           <TurningKite state={state} />
-          <span className="fc-drag-hint">拖动我</span>
+          <span className="fc-drag-hint">Drag me</span>
         </div>
         <div className="fc-pet-controls">
-          <button type="button" title="播放桌宠提示音" aria-label="播放桌宠提示音"><Volume2 size={18} /></button>
-          <button type="button" onClick={() => setIsExpanded((value) => !value)} title={showMessage ? '收起消息' : '展开消息'} aria-label={showMessage ? '收起消息' : '展开消息'}>
+          <button type="button" title="Play companion sound" aria-label="Play companion sound"><Volume2 size={18} /></button>
+          <button type="button" onClick={() => setIsExpanded((value) => !value)} title={showMessage ? 'Collapse message' : 'Expand message'} aria-label={showMessage ? 'Collapse message' : 'Expand message'}>
             {showMessage ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
           </button>
         </div>
         <button type="button" className="fc-demo-trigger" onClick={simulateDistraction} disabled={!isActive || isIntervening}>
-          <Sparkles size={13} /> 模拟分心
+          <Sparkles size={13} /> Simulate distraction
         </button>
       </div>
     </section>
